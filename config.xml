@@ -5,6 +5,10 @@
         id        = "phonegap.snake"
         version   = "1.0.0">
     
+    <name> Snake game </name>
+    
+    <description> A snake game developed in 2016 by Miroslav Kovar, SmitH20.</description>
+    
     <icon src="icon.png" />
     <icon src="icon.png" gap:platform="android"/>
 
