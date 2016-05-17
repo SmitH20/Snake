@@ -9,7 +9,6 @@ var startGame = {
         game.load.audio('click', 'sounds/click_one.mp3');
     },
     create: function () {
-
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
         game.stage.backgroundColor = '#555555';
@@ -22,7 +21,7 @@ var startGame = {
         this.but = game.add.button(game.world.centerX - (game.cache.getImage('button').width / 2),
                 game.world.centerY - (game.cache.getImage('button').height / 2),
                 'button',
-                this.actione,
+                this.action,
                 this);
         this.but.events.onInputDown.add(this.down, this);
         this.but = game.add.audio('click');
@@ -31,11 +30,11 @@ var startGame = {
         this.buttt = game.add.button(game.world.centerX - (game.cache.getImage('button2').width / 2),
                 game.world.centerY - (game.cache.getImage('button2').height / 2),
                 'button2',
-                this.actione,
+                this.action,
                 this, 0, 0, 1, 0);
         console.log('Button down');
     },
-    actione: function () {
+    action: function () {
         game.state.start('main');
         this.but.play();
     }
@@ -58,12 +57,12 @@ var mainState = {
         game.load.image('bg_purple_pixels', 'img/background_purple_pixels.png');
         game.load.image('bg_darkgreen_oldcanvas', 'img/background_darkgreen_oldcanvas.png');
 
-        this.Direction = {'UP': 1, 'DOWN': 2, 'LEFT': 4, 'RIGHT': 8};
-        this.currentDirection = 2;
+        this.Direction = {'UP': 1, 'DOWN': 2, 'LEFT': 3, 'RIGHT': 4};
+        this.currentDirection = Math.floor(Math.random()* 4) +1;
         this.player = [];
         this.speed = 18;
         this.lastUpdate = 0;
-        this.updateSpeed = 100;
+        this.updateSpeed = 120;
         this.keyUP = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         this.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         this.keyLEFT = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
@@ -79,7 +78,6 @@ var mainState = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         this.apple = game.add.sprite(144, 144, 'apple');
         this.apple_sound = game.add.audio('eating');
-
         this.color = this.randomSnake();
         for (var i = 0; i < 4; i++) {
             this.increaseLength();
@@ -147,13 +145,12 @@ var mainState = {
         }
     },
     increaseLength: function () {
-        var x = 90;
-        var y = 90;
+        var x = 216;
+        var y = 216;
         if (this.player.length !== 0) {
             x = this.player[this.player.length - 1].x + 18;
             y = this.player[this.player.length - 1].y + 18;
         }
-
         var snakeHead = game.add.sprite(x, y, this.color);
         game.physics.arcade.enable(snakeHead);
         this.player.push(snakeHead);
@@ -205,7 +202,7 @@ var mainState = {
         }
         return false;
     },
-    chDirect: function () {
+    changeDirect: function () {
         switch (this.currentDirection) {
             case this.Direction.UP:
                 this.player[0].y -= this.speed;
@@ -231,7 +228,6 @@ var mainState = {
         for (var i = 0; i < 3; i++) {
             tiles[i] = [];
         }
-
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 3; j++) {
                 var tmp_x = Math.round(w / 3) + j * Math.round(w / 3);
@@ -239,7 +235,6 @@ var mainState = {
                 tiles[i][j] = [tmp_x, tmp_y];
             }
         }
-
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 3; j++) {
                 if (i === 0) {
@@ -262,7 +257,6 @@ var mainState = {
                 }
             }
         }
-
         if (lastPassed[0] === 2 && lastPassed[1] === 3) { // 2
             if (this.currentDirection !== this.Direction.DOWN)
                 this.currentDirection = this.Direction.UP;
@@ -315,10 +309,8 @@ var mainState = {
         if (this.keyRIGHT.isDown || this.keyD.isDown) {
             if (this.currentDirection !== this.Direction.LEFT) {
                 this.currentDirection = this.Direction.RIGHT;
-
             }
         }
-
         if (this.keyDOWN.isDown || this.keyS.isDown) {
             if (this.currentDirection !== this.Direction.UP)
                 this.currentDirection = this.Direction.DOWN;
@@ -327,9 +319,7 @@ var mainState = {
             return;
         }
         if (this.checkCollisionSelf()) {
-
             game.state.start("end");
-
             return;
         }
         if (((this.player[0].x + (this.player[0].width / 2)) > this.apple.x) && (this.player[0].x < (this.apple.x + this.apple.width / 2))) {
@@ -345,14 +335,11 @@ var mainState = {
                         x = Math.floor((Math.random() * 450) + 18) % 18 * 18;
                         y = Math.floor((Math.random() * 450) + 54) % 18 * 18;
                         i = -1;
-
                     }
-
                 }
                 this.apple = game.add.sprite(x, y, 'apple');
                 score += 5;
-
-                if (score % 40 === 0) {
+                if (score % 50 === 0) {
                     if (this.updateSpeed >= 10)
                         this.updateSpeed -= 10;
                 }
@@ -371,8 +358,7 @@ var mainState = {
             oldX = x;
             oldY = y;
         }
-
-        this.chDirect();
+        this.changeDirect();
         if (this.checkOutOfBoundry()) {
             game.state.start('end');
             return;
